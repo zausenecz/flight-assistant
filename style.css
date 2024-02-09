@@ -1,0 +1,94 @@
+:root {
+    --primary: #f2f1ef;
+    --secondary: #232222;
+    --accent: #9c2327;
+}
+
+body {
+    margin: 0;
+    font-family: Montserrat, "Times New Roman";
+    
+}
+
+* {
+    font-family: inherit;
+    background: var(--primary);
+    color: var(--secondary);
+}
+
+#main_wrapper {
+    height: 100dvh;
+    display: grid;
+    place-items: center;
+    transition: .1s ease-out;
+}
+
+#main_element {
+    max-width: 80vw;
+    font-size: 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: .5rem;
+}
+
+
+#callInput {
+    display: grid;
+    grid-template-columns: calc(2.5ch + 1rem) 1fr;
+    gap: .5rem;
+}
+
+
+input {
+    padding: 1rem;
+    font-size: 2rem;
+    border-radius: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+    text-transform:uppercase;
+    text-align: center;
+}
+
+#submit {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    gap: .5rem;
+}
+
+#submit > div {
+    overflow: hidden;
+}
+
+#search {
+    font-size: 2rem;
+    background: var(--secondary);
+    padding: 1rem;
+    border-radius: 1rem;
+    color: var(--primary);
+    text-align: center;
+    border: 2px solid var(--secondary);
+    transition: .2s ease-out;
+}
+
+#search:hover {
+    background: transparent;
+    color: black;
+}
+
+#clearBtn {
+    background: var(--accent);
+    color: var(--primary);
+    text-align: center;
+    transition: .2s ease-out;
+    border-radius: 1rem;
+    display: grid;
+    place-items: center;
+    border: 2px solid var(--accent);
+}
+
+#clearBtn:hover {
+    color: var(--accent);
+    background: var(--primary);
+    
+}

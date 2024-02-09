@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>FlightFinder</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+<link rel="shortcut icon" href="logo
+jpg">
+</head>
+<body>
+    <div id="main_wrapper">
+        <div id="main_element">
+            <div>РЕЙС</div>
+            <div id="callInput">
+                <div><input id="callLetters" type="text" placeholder="XX" maxlength="2" oninput="inputMove(this.value)"></div>
+                <div><input id="callNums" type="number" placeholder="0000" onkeydown="searchEnter()"></div>
+            </div>
+            <div id="submit">
+                <div id="search">поиск</div>
+                <div id="clearBtn">&times;</div>
+            </div>
+            
+        </div>
+        
+    </div>
+    
+    <script>
+     document.getElementById("search").onclick = (event) => find();
+      document.getElementById("clearBtn").onclick = (event) => clear();
+     
+ 
+     
+     function find() {
+     
+     let letter = document.getElementById("callLetters").value.toUpperCase();
+     let num = document.getElementById("callNums").value;
+            let link = `https://travel.yandex.ru/avia/flights/${letter}-${num}/`;
+            window.open(link);
+    } 
+     
+     
+    
+    function searchEnter() {
+        if(event.key === 'Enter') {
+         find();
+     }
+    }
+    
+    function inputMove(text) {;
+        if(text.length > 1) {
+         document.getElementById("callNums").focus();
+     }
+    }
+    
+      function clear() {
+        document.getElementById("callLetters").value = "";
+        document.getElementById("callNums").value = "";
+    }
+    
+    </script>
+</body>
+</html>
