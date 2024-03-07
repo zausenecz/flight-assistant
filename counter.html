@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Заголовок страницы</title>
+</head>
+<body>
+    <style>
+        body {
+            font-size: 2rem;
+        }
+        * {
+            font-size: inherit;
+        }
+        input {
+            width: 80vw;
+            padding: 1rem;
+        }
+        #output {
+            margin-top: 1rem;
+        }
+    </style>
+    <input id="time1" type="text" placeholder="от">
+    <input id="time2" type="text" placeholder="до">
+    <br /><br />
+    
+    <input id="divider" type="text" placeholder="поделить на">
+      <br /><br />
+    <button onclick="timeCount()">Расчитать</button>
+    <div id="output"></div>
+    <script>
+        var time1 = "19:43";
+        var time2 = "6:30";
+        var divider = 4;
+        var output = document.getElementById("output");
+        
+        
+        function toTime(text) {
+            var hours = parseInt(text.substring(0, 2));
+        var minutes = parseInt(text.slice(-2));
+        
+        return hours*60 + minutes;
+        }
+        
+        function toText(time) {
+           var timeCC = parseInt(time / 60) + ":" + Math.round((time % 60) / 5) * 5;
+        if (timeCC.split(':')[1].length < 2) timeCC = timeCC.split(':')[0] + ":0" + timeCC.split(':')[1];
+        return timeCC
+        }
+        
+        function timeCount () {
+        
+            var time1 = document.getElementById("time1").value;
+            var time2 = document.getElementById("time2").value;
+            var divider = document.getElementById("divider").value;
+            var timeDiff;
+            output.innerText = "";
+            if (toTime(time2) > toTime(time1)) timeDiff = toTime(time2) - toTime(time1);
+            else timeDiff = toTime(time2) + 1440 - toTime(time1);
+            
+            timeStep = timeDiff / divider;
+
+            
+            let currentStep = time1; 
+            let nextStep;
+            let cS = toTime(currentStep);
+            if (cS >= 1440) currentStep = toText(cS - 1440);
+            
+            for (let i = 1; i < divider; i++) {
+            
+                cS = toTime(currentStep);
+                
+                nextStep = toText(cS + timeStep);
+
+                let nS = toTime(nextStep);
+                
+                if (nS >= 1440) nextStep = toText(nS - 1440);
+                if (cS >= 1440) currentStep = toText(cS - 1440);
+                
+                output.innerText += currentStep + " – " + nextStep;
+                output.innerHTML += "<br />";
+                currentStep = nextStep;
+            }
+            
+            output.innerText += currentStep + " – " + time2;            
+        }
+        
+    </script>
+</body>
+</html>
