@@ -32,6 +32,10 @@ body {
     gap: .5rem;
 }
 
+#footer{
+    display: flex;
+    justify-content: space-between;
+}
 
 #callInput {
     display: grid;
