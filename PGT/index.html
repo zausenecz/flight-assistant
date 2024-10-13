@@ -54,7 +54,7 @@
 
             let currentGridNumbers = reversedGridNumbers; // По умолчанию развернутая сетка
             let hintsEnabled = false; // По умолчанию подсказки скрыты
-            let gridBorderEnabled = false; // Default: grid with border
+            let gridBorderEnabled = true; // Default: grid with border
 
             const bigGridElement = document.getElementById("bigGrid");
             const targetNumberElement = document.getElementById("target-number");
@@ -243,7 +243,7 @@
 
             // Обновляем активную опцию для каждой группы настроек
             updateActiveOption(reversedGridOption, "grid-option"); // По умолчанию развернутая сетка
-            gridHintOption.classList.remove("active"); // Default active state for "Сетка"
+            gridHintOption.classList.add("active"); // Default active state for "Сетка"
         </script>
     </body>
 </html>
