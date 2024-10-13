@@ -36,8 +36,8 @@
                         <div>
                             Подсказки
                             <div class="options">
-                                <div class="hint-option" id="hidden-hint-option">Скрыть</div>
-                                <div class="hint-option" id="showed-hint-option">Отобразить</div>
+                                <div class="hint-option" id="grid-hint-option">Сетка</div>
+                                <div class="hint-option" id="numbers-hint-option">Цифры</div>
                             </div>
                         </div>
                     </div>
@@ -54,6 +54,7 @@
 
             let currentGridNumbers = reversedGridNumbers; // По умолчанию развернутая сетка
             let hintsEnabled = false; // По умолчанию подсказки скрыты
+            let gridBorderEnabled = false; // Default: grid with border
 
             const bigGridElement = document.getElementById("bigGrid");
             const targetNumberElement = document.getElementById("target-number");
@@ -63,31 +64,61 @@
 
             const reversedGridOption = document.getElementById("reversed-grid-option");
             const standardGridOption = document.getElementById("standard-grid-option");
-            const hiddenHintOption = document.getElementById("hidden-hint-option");
-            const showedHintOption = document.getElementById("showed-hint-option");
+            const gridHintOption = document.getElementById("grid-hint-option");
+            const numbersHintOption = document.getElementById("numbers-hint-option");
 
             let targetNumber = null;
 
-            // Функция для создания сетки
+            // Восстанавливаем настройки при загрузке
+            document.addEventListener("DOMContentLoaded", () => {
+                if (localStorage.getItem("gridBorderEnabled") !== null) {
+                    gridBorderEnabled = JSON.parse(localStorage.getItem("gridBorderEnabled"));
+                    if (gridBorderEnabled) {
+                        gridHintOption.classList.add("active");
+                        addGridBorders();
+                    } else {
+                        gridHintOption.classList.remove("active");
+                        removeGridBorders();
+                    }
+                }
+
+                if (localStorage.getItem("hintsEnabled") !== null) {
+                    hintsEnabled = JSON.parse(localStorage.getItem("hintsEnabled"));
+                    if (hintsEnabled) {
+                        numbersHintOption.classList.add("active");
+                    } else {
+                        numbersHintOption.classList.remove("active");
+                    }
+                }
+                // Восстанавливаем раскладку
+                const savedGridLayout = localStorage.getItem("currentGrid");
+                if (savedGridLayout === "standard") {
+                    currentGridNumbers = standardGridNumbers;
+                    updateActiveOption(standardGridOption, "grid-option");
+                } else {
+                    currentGridNumbers = reversedGridNumbers;
+                    updateActiveOption(reversedGridOption, "grid-option");
+                }
+                updateGame(); // Обновляем сетку
+            });
+
+            // Create grid function
             function createGrid(gridNumbers) {
-                // Очистка предыдущей сетки
-                bigGridElement.innerHTML = "";
+                bigGridElement.innerHTML = ""; // Clear previous grid
 
                 gridNumbers.forEach((bigCellId) => {
-                    // Создаем ячейку большой сетки
                     const bigGridCell = document.createElement("div");
                     bigGridCell.classList.add("big-grid-cell");
                     bigGridCell.setAttribute("data-big-cell-id", bigCellId);
 
                     gridNumbers.forEach((smallCellId) => {
-                        // Создаем ячейку маленькой сетки внутри большой ячейки
                         const smallGridCell = document.createElement("div");
                         smallGridCell.classList.add("small-grid-cell");
                         smallGridCell.setAttribute("data-small-cell-id", smallCellId);
+
                         if (hintsEnabled) smallGridCell.textContent = smallCellId;
                         else smallGridCell.textContent = "";
 
-                        // Обработка клика на ячейку
                         smallGridCell.addEventListener("click", function () {
                             const bigCell = this.parentElement.getAttribute("data-big-cell-id");
                             const smallCell = this.getAttribute("data-small-cell-id");
@@ -95,16 +126,32 @@
                             handleCellClick(cellId);
                         });
 
-                        // Добавляем ячейку маленькой сетки в ячейку большой сетки
                         bigGridCell.appendChild(smallGridCell);
                     });
 
-                    // Добавляем ячейку большой сетки в контейнер сетки
                     bigGridElement.appendChild(bigGridCell);
+                });
+
+                if (gridBorderEnabled) {
+                    addGridBorders();
+                } else {
+                    removeGridBorders();
+                }
+            }
+
+            function addGridBorders() {
+                document.querySelectorAll(".big-grid-cell, .small-grid-cell").forEach((cell) => {
+                    cell.classList.add("border");
                 });
             }
 
-            // Функция для генерации нового целевого числа
+            function removeGridBorders() {
+                document.querySelectorAll(".big-grid-cell, .small-grid-cell").forEach((cell) => {
+                    cell.classList.remove("border");
+                });
+            }
+
+            // Generate new target number
             function generateTargetNumber() {
                 const bigCellId = currentGridNumbers[Math.floor(Math.random() * currentGridNumbers.length)];
                 const smallCellId = currentGridNumbers[Math.floor(Math.random() * currentGridNumbers.length)];
@@ -112,31 +159,25 @@
                 targetNumberElement.textContent = `Малый квадрат: ${targetNumber}`;
             }
 
-            // Функция для обработки кликов по клеткам
+            // Handle cell clicks
             function handleCellClick(clickedId) {
                 if (clickedId === targetNumber.toString()) {
-                    // Правильный выбор
                     document.querySelectorAll("*").forEach((el) => el.classList.add("correct"));
                     generateTargetNumber();
                 } else {
-                    // Неправильный выбор
                     document.querySelectorAll("*").forEach((el) => el.classList.add("wrong"));
                 }
 
-                // Удаляем подсветку через 500мс
                 setTimeout(() => {
-                    document.querySelectorAll("*").forEach((el) => el.classList.remove("correct"));
-
-                    document.querySelectorAll("*").forEach((el) => el.classList.remove("wrong"));
+                    document.querySelectorAll("*").forEach((el) => el.classList.remove("correct", "wrong"));
                 }, 300);
             }
 
-            // Функция для обновления сетки и генерации нового числа
+            // Update game: re-create grid and generate a new target
             function updateGame() {
                 createGrid(currentGridNumbers);
                 generateTargetNumber();
             }
-
             // Обработка кнопки настроек
             settingsButton.addEventListener("click", () => {
                 if (settingsWrapper.style.gridTemplateRows === "0fr" || settingsWrapper.style.gridTemplateRows === "") {
@@ -150,25 +191,39 @@
             reversedGridOption.addEventListener("click", () => {
                 currentGridNumbers = reversedGridNumbers;
                 updateActiveOption(reversedGridOption, "grid-option");
+                localStorage.setItem("currentGrid", "reversed"); // Сохраняем состояние раскладки
                 updateGame();
             });
 
             standardGridOption.addEventListener("click", () => {
                 currentGridNumbers = standardGridNumbers;
                 updateActiveOption(standardGridOption, "grid-option");
+                localStorage.setItem("currentGrid", "standard"); // Сохраняем состояние раскладки
                 updateGame();
             });
 
-            // Обработка включения подсказок с помощью div блоков
-            hiddenHintOption.addEventListener("click", () => {
-                hintsEnabled = false;
-                updateActiveOption(hiddenHintOption, "hint-option");
-                updateGame();
+            // Toggle grid borders
+            gridHintOption.addEventListener("click", () => {
+                gridBorderEnabled = !gridBorderEnabled;
+                if (gridBorderEnabled) {
+                    gridHintOption.classList.add("active");
+                    addGridBorders();
+                } else {
+                    gridHintOption.classList.remove("active");
+                    removeGridBorders();
+                }
+                localStorage.setItem("gridBorderEnabled", gridBorderEnabled); // Сохраняем состояние "Сетка"
             });
 
-            showedHintOption.addEventListener("click", () => {
-                hintsEnabled = true;
-                updateActiveOption(showedHintOption, "hint-option");
+            // Toggle numbers visibility
+            numbersHintOption.addEventListener("click", () => {
+                hintsEnabled = !hintsEnabled;
+                if (hintsEnabled) {
+                    numbersHintOption.classList.add("active");
+                } else {
+                    numbersHintOption.classList.remove("active");
+                }
+                localStorage.setItem("hintsEnabled", hintsEnabled); // Сохраняем состояние "Цифры"
                 updateGame();
             });
 
@@ -183,12 +238,12 @@
                 activeOption.classList.add("active");
             }
 
-            // Инициализация игры
+            // Initialize game
             updateGame();
 
             // Обновляем активную опцию для каждой группы настроек
             updateActiveOption(reversedGridOption, "grid-option"); // По умолчанию развернутая сетка
-            updateActiveOption(hiddenHintOption, "hint-option"); // По умолчанию скрытые подсказки
+            gridHintOption.classList.remove("active"); // Default active state for "Сетка"
         </script>
     </body>
 </html>
