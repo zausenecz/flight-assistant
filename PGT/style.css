@@ -16,6 +16,7 @@ body {
     background: var(--primary);
     color: var(--secondary);
     transition: background-color 0.2s ease-in;
+    -webkit-tap-highlight-color: transparent;
 }
 
 #page-header {
