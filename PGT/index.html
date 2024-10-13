@@ -19,7 +19,7 @@
             </div>
 
             <div>
-                <div id="target-number">Малый квадрат: --</div>
+                <div id="target-number">Квадрат: --</div>
                 <div id="bigGrid" class="big-grid"></div>
             </div>
 
@@ -156,7 +156,7 @@
                 const bigCellId = currentGridNumbers[Math.floor(Math.random() * currentGridNumbers.length)];
                 const smallCellId = currentGridNumbers[Math.floor(Math.random() * currentGridNumbers.length)];
                 targetNumber = parseInt(`${bigCellId}${smallCellId}`, 10);
-                targetNumberElement.textContent = `Малый квадрат: ${targetNumber}`;
+                targetNumberElement.textContent = `Квадрат: ${targetNumber}`;
             }
 
             // Handle cell clicks
