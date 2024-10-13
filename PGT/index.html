@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="ru">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta charset="UTF-8" />
+        <title>Grid Trainer</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="style.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet" />
+        <link rel="shortcut icon" href="logo.png" />
+    </head>
+    <body>
+        <div id="game-container">
+            <div id="page-header">
+                <div>PGT: PVO Grid Trainer</div>
+                Тренер сетки ПВО
+            </div>
+
+            <div>
+                <div id="target-number">Малый квадрат: --</div>
+                <div id="bigGrid" class="big-grid"></div>
+            </div>
+
+            <div id="settings-element">
+                <div id="settings-wrapper">
+                    <div id="settings-panel">
+                        <div>
+                            Cетка
+                            <div class="options">
+                                <div class="grid-option" id="reversed-grid-option">Развернутая</div>
+                                <div class="grid-option" id="standard-grid-option">Стандартная</div>
+                            </div>
+                        </div>
+                        <div>
+                            Подсказки
+                            <div class="options">
+                                <div class="hint-option" id="hidden-hint-option">Скрыть</div>
+                                <div class="hint-option" id="showed-hint-option">Отобразить</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button id="settings-button">&#9881;</button>
+            </div>
+        </div>
+
+        <script>
+            // Определяем раскладки
+            // Определяем раскладки
+            const standardGridNumbers = [1, 2, 3, 8, 9, 4, 7, 6, 5];
+            const reversedGridNumbers = [3, 2, 1, 4, 9, 8, 5, 6, 7];
+
+            let currentGridNumbers = reversedGridNumbers; // По умолчанию развернутая сетка
+            let hintsEnabled = false; // По умолчанию подсказки скрыты
+
+            const bigGridElement = document.getElementById("bigGrid");
+            const targetNumberElement = document.getElementById("target-number");
+            const settingsButton = document.getElementById("settings-button");
+            const settingsPanel = document.getElementById("settings-panel");
+            const settingsWrapper = document.getElementById("settings-wrapper");
+
+            const reversedGridOption = document.getElementById("reversed-grid-option");
+            const standardGridOption = document.getElementById("standard-grid-option");
+            const hiddenHintOption = document.getElementById("hidden-hint-option");
+            const showedHintOption = document.getElementById("showed-hint-option");
+
+            let targetNumber = null;
+
+            // Функция для создания сетки
+            function createGrid(gridNumbers) {
+                // Очистка предыдущей сетки
+                bigGridElement.innerHTML = "";
+
+                gridNumbers.forEach((bigCellId) => {
+                    // Создаем ячейку большой сетки
+                    const bigGridCell = document.createElement("div");
+                    bigGridCell.classList.add("big-grid-cell");
+                    bigGridCell.setAttribute("data-big-cell-id", bigCellId);
+
+                    gridNumbers.forEach((smallCellId) => {
+                        // Создаем ячейку маленькой сетки внутри большой ячейки
+                        const smallGridCell = document.createElement("div");
+                        smallGridCell.classList.add("small-grid-cell");
+                        smallGridCell.setAttribute("data-small-cell-id", smallCellId);
+                        if (hintsEnabled) smallGridCell.textContent = smallCellId;
+                        else smallGridCell.textContent = "";
+
+                        // Обработка клика на ячейку
+                        smallGridCell.addEventListener("click", function () {
+                            const bigCell = this.parentElement.getAttribute("data-big-cell-id");
+                            const smallCell = this.getAttribute("data-small-cell-id");
+                            const cellId = `${bigCell}${smallCell}`;
+                            handleCellClick(cellId);
+                        });
+
+                        // Добавляем ячейку маленькой сетки в ячейку большой сетки
+                        bigGridCell.appendChild(smallGridCell);
+                    });
+
+                    // Добавляем ячейку большой сетки в контейнер сетки
+                    bigGridElement.appendChild(bigGridCell);
+                });
+            }
+
+            // Функция для генерации нового целевого числа
+            function generateTargetNumber() {
+                const bigCellId = currentGridNumbers[Math.floor(Math.random() * currentGridNumbers.length)];
+                const smallCellId = currentGridNumbers[Math.floor(Math.random() * currentGridNumbers.length)];
+                targetNumber = parseInt(`${bigCellId}${smallCellId}`, 10);
+                targetNumberElement.textContent = `Малый квадрат: ${targetNumber}`;
+            }
+
+            // Функция для обработки кликов по клеткам
+            function handleCellClick(clickedId) {
+                if (clickedId === targetNumber.toString()) {
+                    // Правильный выбор
+                    document.querySelectorAll("*").forEach((el) => el.classList.add("correct"));
+                    generateTargetNumber();
+                } else {
+                    // Неправильный выбор
+                    document.querySelectorAll("*").forEach((el) => el.classList.add("wrong"));
+                }
+
+                // Удаляем подсветку через 500мс
+                setTimeout(() => {
+                    document.querySelectorAll("*").forEach((el) => el.classList.remove("correct"));
+
+                    document.querySelectorAll("*").forEach((el) => el.classList.remove("wrong"));
+                }, 300);
+            }
+
+            // Функция для обновления сетки и генерации нового числа
+            function updateGame() {
+                createGrid(currentGridNumbers);
+                generateTargetNumber();
+            }
+
+            // Обработка кнопки настроек
+            settingsButton.addEventListener("click", () => {
+                if (settingsWrapper.style.gridTemplateRows === "0fr" || settingsWrapper.style.gridTemplateRows === "") {
+                    settingsWrapper.style.gridTemplateRows = "1fr";
+                } else {
+                    settingsWrapper.style.gridTemplateRows = "0fr";
+                }
+            });
+
+            // Обработка выбора раскладки с помощью div блоков
+            reversedGridOption.addEventListener("click", () => {
+                currentGridNumbers = reversedGridNumbers;
+                updateActiveOption(reversedGridOption, "grid-option");
+                updateGame();
+            });
+
+            standardGridOption.addEventListener("click", () => {
+                currentGridNumbers = standardGridNumbers;
+                updateActiveOption(standardGridOption, "grid-option");
+                updateGame();
+            });
+
+            // Обработка включения подсказок с помощью div блоков
+            hiddenHintOption.addEventListener("click", () => {
+                hintsEnabled = false;
+                updateActiveOption(hiddenHintOption, "hint-option");
+                updateGame();
+            });
+
+            showedHintOption.addEventListener("click", () => {
+                hintsEnabled = true;
+                updateActiveOption(showedHintOption, "hint-option");
+                updateGame();
+            });
+
+            // Функция для обновления активного стиля
+            function updateActiveOption(activeOption, optionClass) {
+                // Сначала удалим активный класс у всех опций внутри указанной группы
+                document.querySelectorAll(`.${optionClass}`).forEach((option) => {
+                    option.classList.remove("active");
+                });
+
+                // Добавим класс active выбранной опции
+                activeOption.classList.add("active");
+            }
+
+            // Инициализация игры
+            updateGame();
+
+            // Обновляем активную опцию для каждой группы настроек
+            updateActiveOption(reversedGridOption, "grid-option"); // По умолчанию развернутая сетка
+            updateActiveOption(hiddenHintOption, "hint-option"); // По умолчанию скрытые подсказки
+        </script>
+    </body>
+</html>
