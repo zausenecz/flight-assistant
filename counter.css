@@ -20,9 +20,8 @@ body {
 #main_wrapper {
     height: 100dvh;
     display: grid;
-    place-items: center;
+    justify-content: center;
     transition: .1s ease-out;
-    padding-block: 1rem;
 }
 
 #main_element {
@@ -32,7 +31,7 @@ body {
     flex-direction: column;
     justify-content: space-between;
     gap: .5rem;
-background: pink;
+padding-block: 2rem;
 }
 
 input {
