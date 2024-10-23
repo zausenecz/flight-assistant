@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta charset="UTF-8">
     <title>Расчет ночи</title>
-<link rel="stylesheet" href="counter.css">
+<link rel="stylesheet" href="style.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,14 +15,17 @@
 <body>
     <div id="main_wrapper">
 <div id="main_element">
-    <input id="time1" type="text" placeholder="от">
+    <div>
+          <input id="time1" type="text" placeholder="от">
     <input id="time2" type="text" placeholder="до">
-    <br /><br />
-    
+
+    <br/><br/>
     <input id="divider" type="text" placeholder="поделить на">
-      <br /><br />
-    <button onclick="timeCount()">Расчитать</button>
-    <div id="output"></div>
+    </div>
+  
+        <div id="output"></div>
+    <button id="confirmBtn" onclick="timeCount()">Расчитать</button>
+  
 
 </div>
 </div>
@@ -82,6 +85,12 @@
             
             output.innerText += currentStep + " – " + time2;            
         }
+        
+        $("#divider").keyup(function(event) {
+    if (event.key === 'Enter') {
+        $("#confirmBtn").click();
+    }
+});
         
     </script>
 </body>
