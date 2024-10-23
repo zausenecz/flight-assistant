@@ -3,25 +3,12 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta charset="UTF-8">
-    <title>Заголовок страницы</title>
+    <title>Расчет ночи</title>
+<link rel="stylesheet" href="counter.css">
 </head>
 <body>
-    <style>
-        body {
-            font-size: 2rem;
-        }
-        * {
-            font-size: inherit;
-            border-radius: .5rem;
-        }
-        input {
-            width: 80vw;
-            padding: 1rem;
-        }
-        #output {
-            margin-top: 1rem;
-        }
-    </style>
+    <div id="main_wrapper>
+<div id="main_element>
     <input id="time1" type="text" placeholder="от">
     <input id="time2" type="text" placeholder="до">
     <br /><br />
@@ -30,6 +17,9 @@
       <br /><br />
     <button onclick="timeCount()">Расчитать</button>
     <div id="output"></div>
+
+</div>
+</div>
     <script>
         var time1 = "19:43";
         var time2 = "6:30";
