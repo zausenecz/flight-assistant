@@ -48,6 +48,7 @@ input {
     padding: 1rem;
     font-size: 2rem;
     border-radius: 1rem;
+    border: 2px solid;
     width: 100%;
     box-sizing: border-box;
     text-transform:uppercase;
